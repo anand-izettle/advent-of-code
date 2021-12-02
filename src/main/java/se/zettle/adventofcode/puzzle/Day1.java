@@ -18,7 +18,7 @@ public class Day1 {
     private static record MeasurementWindowPair(List<Long> previous, List<Long> current) {
     }
 
-    public void solve() {
+    public Long solve() {
 
         log.info("*".repeat(50));
         log.info("Day1: puzzle start...");
@@ -38,6 +38,8 @@ public class Day1 {
 
         log.info("Day1: puzzle solved !!");
         log.info("*".repeat(50));
+
+        return (long) increasedMeasurementWindows.size();
     }
 
     private static List<MeasurementWindowPair> getIncreasedMeasurementWindows(final List<Long> measurements) {
