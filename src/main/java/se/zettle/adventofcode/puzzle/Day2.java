@@ -29,7 +29,7 @@ public class Day2 {
 
     }
 
-    protected record Bearing(Long xPos, Long depth,Long aim) {
+    protected record Bearing(Long xPos, Long depth, Long aim) {
 
         public Bearing down(Long units) {
             return new Bearing(xPos(), depth(), aim() + units);
@@ -41,10 +41,10 @@ public class Day2 {
 
         public Bearing forward(Long units) {
             Long depth = depth() + aim() * units;
-            return new Bearing(xPos() + units, depth,aim());
+            return new Bearing(xPos() + units, depth, aim());
         }
 
-        public Long getProduct(){
+        public Long getProduct() {
             return xPos() * depth();
         }
 
@@ -56,8 +56,8 @@ public class Day2 {
     protected static class Submarine {
         private Bearing bearing;
 
-        public void navigate(Direction direction){
-             setBearing(direction.apply(getBearing()));
+        public void navigate(Direction direction) {
+            setBearing(direction.apply(getBearing()));
         }
     }
 
@@ -70,7 +70,7 @@ public class Day2 {
 
         Bearing finalBearing = navigateSubmarine(directions).getBearing();
 
-        log.info("Final Bearing is: {}, product: {}",finalBearing, finalBearing.getProduct());
+        log.info("Final Bearing is: {}, product: {}", finalBearing, finalBearing.getProduct());
         log.info("Day2: puzzle solved !!");
         log.info("*".repeat(50));
 
@@ -85,7 +85,7 @@ public class Day2 {
     }
 
     protected Submarine navigateSubmarine(final List<Direction> directions) {
-        Submarine submarine = new Submarine(new Bearing(0L, 0L,0L));
+        Submarine submarine = new Submarine(new Bearing(0L, 0L, 0L));
 
         directions
             .forEach(submarine::navigate);

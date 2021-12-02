@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 import lombok.Getter;
 import org.springframework.core.io.Resource;
@@ -41,7 +40,7 @@ public class InputProvider {
         return inputMap.get(keyName);
     }
 
-    public static Map<String,String> getInputMap(){
+    public static Map<String, String> getInputMap() {
         return inputMap;
     }
 
@@ -50,7 +49,7 @@ public class InputProvider {
         List<Resource> resources = getResources(BASE_FOLDER);
         return resources.stream()
             .map(this::getFileNameAndContents)
-            .filter(Predicate.not( e  -> e.getValue().isBlank()))
+            .filter(Predicate.not(e -> e.getValue().isBlank()))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -95,15 +94,14 @@ public class InputProvider {
 
             int resources = path.indexOf(BASE_FOLDER);
 
-            return path.substring(resources + BASE_FOLDER.length()+1)
-                .replace("/","")
-                .replace(".txt","");
+            return path.substring(resources + BASE_FOLDER.length() + 1)
+                .replace("/", "")
+                .replace(".txt", "");
 
         } catch (IOException e) {
             return f.getFilename();
         }
 
     }
-
 
 }

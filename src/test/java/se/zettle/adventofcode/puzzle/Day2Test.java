@@ -20,7 +20,7 @@ class Day2Test {
 
         List<Day2.Direction> directions = getDirections();
         Day2.Submarine submarine = day2.navigateSubmarine(directions);
-        Day2.Bearing finalPosition = new Day2.Bearing(12L,108L, 12L);
+        Day2.Bearing finalPosition = new Day2.Bearing(12L, 108L, 12L);
         assertThat(submarine.getBearing()).isEqualTo(finalPosition);
 
     }
@@ -29,7 +29,7 @@ class Day2Test {
     void solve_expect_OK() {
         Long answer = day2.solve();
         assertThat(answer).isNotNegative().isNotNull();
-        log.info("Puzzle Answer is: {}",answer);
+        log.info("Puzzle Answer is: {}", answer);
     }
 
     private List<Day2.Direction> getDirections() {

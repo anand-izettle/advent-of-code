@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import se.zettle.adventofcode.StringUtilities;
 import se.zettle.adventofcode.provider.InputProvider;
+
 @Component
 @Slf4j
 public class Day1 {
@@ -34,7 +35,7 @@ public class Day1 {
 
         List<MeasurementWindowPair> increasedMeasurementWindows =
             getIncreasedMeasurementWindows(measurements);
-        log.info("For the 2nd (*); Found total: {} increased measurement windows",increasedMeasurementWindows.size());
+        log.info("For the 2nd (*); Found total: {} increased measurement windows", increasedMeasurementWindows.size());
 
         log.info("Day1: puzzle solved !!");
         log.info("*".repeat(50));

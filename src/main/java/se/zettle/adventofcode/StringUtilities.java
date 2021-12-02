@@ -5,8 +5,8 @@ import java.util.stream.IntStream;
 
 public class StringUtilities {
 
-    public static <T> List<List<T>> getSlidingWindows(List<T> candidates, int windowSize){
-        if (candidates.isEmpty() || windowSize > candidates.size()){
+    public static <T> List<List<T>> getSlidingWindows(List<T> candidates, int windowSize) {
+        if (candidates.isEmpty() || windowSize > candidates.size()) {
             return List.of();
         }
 
@@ -15,7 +15,6 @@ public class StringUtilities {
             .toList();
 
         return windows;
-
 
     }
 }
