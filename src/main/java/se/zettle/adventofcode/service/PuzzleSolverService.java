@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.zettle.adventofcode.puzzle.Day1;
 import se.zettle.adventofcode.puzzle.Day2;
+import se.zettle.adventofcode.puzzle.Day3;
 
 @Service
 @Slf4j
@@ -12,11 +13,17 @@ public class PuzzleSolverService {
 
     private final Day1 day1;
     private final Day2 day2;
+    private final Day3 day3;
 
     @Autowired
-    public PuzzleSolverService(final Day1 day1, final Day2 day2) {
+    public PuzzleSolverService(
+        final Day1 day1,
+        final Day2 day2,
+        final Day3 day3
+    ) {
         this.day1 = day1;
         this.day2 = day2;
+        this.day3 = day3;
     }
 
     public void run() {
@@ -24,6 +31,7 @@ public class PuzzleSolverService {
         log.info("Here come the Answers...");
         log.info("Day1: {}", day1.solve());
         log.info("Day2: {}", day2.solve());
+        log.info("Day3: {}",day3.solve());
         log.info("Done !!");
         log.info("==".repeat(20));
     }
