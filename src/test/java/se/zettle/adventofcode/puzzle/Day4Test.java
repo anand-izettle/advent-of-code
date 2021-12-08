@@ -21,7 +21,7 @@ class Day4Test {
         Day4.BingoInput bingoInput = getSample();
         assertThat(bingoInput.draw()).isEqualTo(sampleDraw);
         assertThat(bingoInput.boards()).isEqualTo(sampleBoards);
-
+        Day4.BingoGame bingoGame = day4.getBingoGame(bingoInput);
     }
 
     @Test
@@ -35,8 +35,32 @@ class Day4Test {
 
         assertThat(boards).hasSize(3);
         boards.values()
-            .forEach(boardRows -> assertThat(boardRows.cells()).hasSize(25));
+            .forEach(boardRows -> assertThat(boardRows.getCells()).hasSize(25));
 
+    }
+
+    @Test
+    void runSampleGame_Expect_part1_equalTo_4512() {
+        Day4.BingoGame bingoGame = day4.getBingoGame(getSample());
+        Day4.Solution solution = day4.findWinner(bingoGame, Day4.PuzzlePart.PART1);
+
+        assertThat(solution.partOne()).isEqualTo(4512L);
+    }
+    @Test
+    void runSampleGame_Expect_part2_equalTo_1924() {
+        Day4.BingoGame bingoGame = day4.getBingoGame(getSample());
+        Day4.Solution solution = day4.findWinner(bingoGame, Day4.PuzzlePart.PART2);
+
+        assertThat(solution.partTwo()).isEqualTo(1924L);
+    }
+
+    @Test
+    void solve_expect_ok() {
+        Day4.Solution solution = day4.solve();
+        assertThat(solution.partOne()).isNotNull();
+        log.info("Part1: {}",solution.partOne());
+        assertThat(solution.partTwo()).isNotNull();
+        log.info("Part2: {}",solution.partTwo());
     }
 
     private Day4.BingoInput getSample() {

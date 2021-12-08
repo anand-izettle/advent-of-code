@@ -8,10 +8,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,16 +25,64 @@ import se.zettle.adventofcode.provider.InputProvider;
 @Slf4j
 public class Day4 {
 
+    protected enum PuzzlePart {PART1, PART2}
+
     protected static record Solution(Long partOne, Long partTwo) {
     }
 
     protected static record BingoInput(String draw, String boards) {
     }
 
-    protected static record BingoCell(Integer number, Integer row, Integer column, boolean found) {
+    @Data
+    @AllArgsConstructor
+    protected static class BingoCell {
+        Integer number;
+        Integer row;
+        Integer column;
+        boolean marked;
     }
 
-    protected static record BingoBoard(List<BingoCell> cells) {
+    @AllArgsConstructor
+    @Data
+    protected static class BingoBoard {
+        List<BingoCell> cells;
+
+        public void markNumber(final Integer bingoNumber) {
+            for (BingoCell cell : cells) {
+                if (cell.getNumber().equals(bingoNumber)) {
+                    cell.setMarked(true);
+                }
+            }
+        }
+
+        public Integer getCompletedRow() {
+            return cells.stream()
+                .filter(BingoCell::isMarked)
+                .collect(Collectors.groupingBy(BingoCell::getRow))
+                .entrySet().stream()
+                .filter(e -> e.getValue().size() == (5L))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+        }
+
+        public Integer getCompletedColumn() {
+            return cells.stream()
+                .filter(BingoCell::isMarked)
+                .collect(Collectors.groupingBy(BingoCell::getColumn))
+                .entrySet().stream()
+                .filter(e -> e.getValue().size() == (5L))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+        }
+    }
+
+    protected static record BingoWinner(Integer boardNumber,
+                                        BingoBoard bingoBoard,
+                                        Integer lastDrawnNumber,
+                                        Integer completedRow,
+                                        Integer completedColumn) {
     }
 
     @AllArgsConstructor
@@ -42,6 +94,85 @@ public class Day4 {
 
         Map<Integer, BingoBoard> boards;
 
+        public BingoWinner runFTW() {
+
+            for (Integer bingoNumber : getNumbers()) {
+                BingoWinner winner = markBoardsAndCheckForWinner(bingoNumber);
+                if (Objects.nonNull(winner)) {
+                    return winner;
+                }
+            }
+            throw new IllegalStateException("No winner !!");
+
+        }
+
+        public BingoWinner runFTL() {
+
+            for (Integer bingoNumber : numbers) {
+                Set<Integer> boardPositions = getBoards().keySet();
+
+                List<BingoWinner> winners = markAllBoardsAndGetWinners(bingoNumber);
+
+                if (winners.isEmpty()) {
+                    continue;
+                }
+
+                Set<Integer> boardsWon = winners.stream().map(BingoWinner::boardNumber)
+
+                    .collect(Collectors.toSet());
+                log.info("Found winner!! board number: {}", boardsWon);
+
+                if (boardPositions.size() == 1) {
+                    return winners.get(0);
+                }
+
+                boardsWon
+                    .forEach(boardPositions::remove);
+            }
+            throw new IllegalStateException("Could not determine last winner");
+        }
+
+        private BingoWinner markBoardsAndCheckForWinner(final Integer bingoNumber) {
+            for (Map.Entry<Integer, BingoBoard> boardEntry : getBoards().entrySet()) {
+                BingoBoard bingoBoard = boardEntry.getValue();
+                bingoBoard.markNumber(bingoNumber);
+                BingoWinner winner = checkCompletedRowOrColumn(boardEntry, bingoNumber);
+                if (Objects.nonNull(winner)) {
+                    return winner;
+                }
+            }
+            return null;
+        }
+
+        private List<BingoWinner> markAllBoardsAndGetWinners(final Integer bingoNumber) {
+            for (Map.Entry<Integer, BingoBoard> boardEntry : getBoards().entrySet()) {
+                BingoBoard bingoBoard = boardEntry.getValue();
+                bingoBoard.markNumber(bingoNumber);
+            }
+
+            return getBoards().entrySet().stream()
+                .map(e -> checkCompletedRowOrColumn(e, bingoNumber))
+                .filter(Objects::nonNull)
+                .toList();
+
+        }
+
+        private BingoWinner checkCompletedRowOrColumn(
+            final Map.Entry<Integer, BingoBoard> boardEntry,
+            final Integer bingoNumber
+        ) {
+            BingoBoard bingoBoard = boardEntry.getValue();
+            Integer completedRow = bingoBoard.getCompletedRow();
+            if (Objects.nonNull(completedRow)) {
+                return new BingoWinner(boardEntry.getKey(), bingoBoard, bingoNumber, completedRow, null);
+            }
+
+            Integer completedColumn = bingoBoard.getCompletedColumn();
+            if (Objects.nonNull(completedColumn)) {
+                return new BingoWinner(boardEntry.getKey(), bingoBoard, bingoNumber, null, completedColumn);
+            }
+            return null;
+        }
     }
 
     public Solution solve() {
@@ -54,17 +185,44 @@ public class Day4 {
 
         BingoGame bingoGame = getBingoGame(bingoInput);
 
-        Solution solution = runBingoGame(bingoGame);
+        Solution s1 = findWinner(bingoGame, PuzzlePart.PART1);
+        log.info("Day4: part1 solution: {}, puzzle solved !!", s1.partOne());
 
-        log.info("Day4: solution: {}, puzzle solved !!",solution);
+        Solution s2 = findWinner(bingoGame, PuzzlePart.PART2);
+
+        log.info("Day4: part2 solution: {}, puzzle solved !!", s2.partTwo());
         log.info("*".repeat(50));
 
-        return solution;
+        return new Solution(s1.partOne(), s2.partTwo());
 
     }
 
-    protected Solution runBingoGame(final BingoGame bingoGame) {
-        throw new UnsupportedOperationException("WIP.. ");
+    protected Solution findWinner(BingoGame bingoGame, final PuzzlePart puzzlePart) {
+        BingoWinner winner = puzzlePart == PuzzlePart.PART1 ?
+            bingoGame.runFTW() :
+            bingoGame.runFTL();
+
+        if (Objects.nonNull(winner)) {
+            log.info(
+                "we have a Winner!! details: boardNumber: {}, completed row/column: {}   ",
+                winner.boardNumber(),
+                Optional.ofNullable(winner.completedRow())
+                    .orElseGet(winner::completedColumn)
+            );
+
+            // Board score: sum(unmarked numbers) * lastDrawnNumber
+            Long score = winner.bingoBoard().getCells().stream()
+                .filter(not(BingoCell::isMarked))
+                .mapToLong(BingoCell::getNumber)
+                .sum() * winner.lastDrawnNumber();
+
+            return puzzlePart == PuzzlePart.PART1 ?
+                new Solution(score, null) :
+                new Solution(null, score);
+        }
+
+        throw new IllegalStateException("could not find a winner");
+
     }
 
     protected BingoGame getBingoGame(BingoInput bingoInput) {
