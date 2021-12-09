@@ -118,9 +118,8 @@ public class Day4 {
                 }
 
                 Set<Integer> boardsWon = winners.stream().map(BingoWinner::boardNumber)
-
                     .collect(Collectors.toSet());
-                log.info("Found winner!! board number: {}", boardsWon);
+                log.debug("Found winner!! board number: {}", boardsWon);
 
                 if (boardPositions.size() == 1) {
                     return winners.get(0);
@@ -203,7 +202,7 @@ public class Day4 {
             bingoGame.runFTL();
 
         if (Objects.nonNull(winner)) {
-            log.info(
+            log.debug(
                 "we have a Winner!! details: boardNumber: {}, completed row/column: {}   ",
                 winner.boardNumber(),
                 Optional.ofNullable(winner.completedRow())
