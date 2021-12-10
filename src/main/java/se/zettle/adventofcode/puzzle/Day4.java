@@ -185,7 +185,7 @@ public class Day4 {
         BingoGame bingoGame = getBingoGame(bingoInput);
 
         Solution s1 = findWinner(bingoGame, PuzzlePart.PART1);
-        log.info("Day4: part1 solution: {}, puzzle solved !!", s1.partOne());
+        log.info("Day4: answer solution: {}, puzzle solved !!", s1.partOne());
 
         Solution s2 = findWinner(bingoGame, PuzzlePart.PART2);
 

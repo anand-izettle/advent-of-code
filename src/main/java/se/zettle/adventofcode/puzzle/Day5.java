@@ -72,7 +72,7 @@ public class Day5 {
             }
 
             if (part == PART1) {
-                throw new IllegalArgumentException("Not considering diagonals in part1");
+                throw new IllegalArgumentException("Not considering diagonals in answer");
             }
 
             if (isDiagonal()) { // 0,6 1,5 2,4 3,3 4,2 5,1
@@ -283,7 +283,7 @@ public class Day5 {
 
         List<Point> part1Points = getOverLappingPoints(puzzleInput, PART1);
 
-        log.info("Day5: part1 overlapping points: {}", part1Points.size());
+        log.info("Day5: answer overlapping points: {}", part1Points.size());
 
         List<Point> part2Points = getOverLappingPoints(puzzleInput, PART2);
         log.info("Day5: part2 overlapping points: {}", part2Points.size());
